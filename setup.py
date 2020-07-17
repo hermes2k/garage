@@ -11,7 +11,7 @@ REQUIRED = [
     # Please keep alphabetized
     'akro',
     'click>=2.0',
-    'cloudpickle<1.5',
+    'cloudpickle~=1.2.0',
     'cma==2.7.0',
     'dowel==0.0.3',
     f'gym[atari,box2d,classic_control]=={GYM_VERSION}',
@@ -20,11 +20,11 @@ REQUIRED = [
     # Pyglet 1.4.0 introduces some api change which breaks some
     # gym environments
     # See: https://github.com/openai/gym/issues/1588
-    'pyglet<1.4.0,>=1.3.0',
+    'pyglet<=1.3.2,>=1.3.0',
     'python-dateutil',
     'ray',
     'scikit-image',
-    'scipy',
+    'scipy==1.4.1',
     'setproctitle>=1.0',
     'tensorflow>=1.14',
     'tensorflow-probability<=0.10.0',
