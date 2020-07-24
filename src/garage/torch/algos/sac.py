@@ -44,11 +44,11 @@ class SAC(RLAlgorithm):
         env_spec (garage.envs.env_spec.EnvSpec): The env_spec attribute of the
             environment that the agent is being trained in. Usually accessable
             by calling env.spec.
-        max_path_length (int): Max path length of the algorithm.
+        max_episode_length (int): Max path length of the algorithm.
         max_eval_path_length (int or None): Maximum length of paths used for
-            off-policy evaluation. If None, defaults to `max_path_length`.
+            off-policy evaluation. If None, defaults to `max_episode_length`.
         gradient_steps_per_itr (int): Number of optimization steps that should
-        max_path_length(int): Max path length of the environment.
+        max_episode_length(int): Max path length of the environment.
         gradient_steps_per_itr(int): Number of optimization steps that should
             occur before the training step is over and a new batch of
             transitions is collected by the sampler.
@@ -86,30 +86,30 @@ class SAC(RLAlgorithm):
     """
 
     def __init__(
-            self,
-            env_spec,
-            policy,
-            qf1,
-            qf2,
-            replay_buffer,
-            *,  # Everything after this is numbers.
-            max_path_length,
-            max_eval_path_length=None,
-            gradient_steps_per_itr,
-            fixed_alpha=None,
-            target_entropy=None,
-            initial_log_entropy=0.,
-            discount=0.99,
-            buffer_batch_size=64,
-            min_buffer_size=int(1e4),
-            target_update_tau=5e-3,
-            policy_lr=3e-4,
-            qf_lr=3e-4,
-            reward_scale=1.0,
-            optimizer=torch.optim.Adam,
-            steps_per_epoch=1,
-            num_evaluation_trajectories=10,
-            eval_env=None,
+        self,
+        env_spec,
+        policy,
+        qf1,
+        qf2,
+        replay_buffer,
+        *,  # Everything after this is numbers.
+        max_episode_length,
+        max_eval_path_length=None,
+        gradient_steps_per_itr,
+        fixed_alpha=None,
+        target_entropy=None,
+        initial_log_entropy=0.,
+        discount=0.99,
+        buffer_batch_size=64,
+        min_buffer_size=int(1e4),
+        target_update_tau=5e-3,
+        policy_lr=3e-4,
+        qf_lr=3e-4,
+        reward_scale=1.0,
+        optimizer=torch.optim.Adam,
+        steps_per_epoch=1,
+        num_evaluation_trajectories=10,
+        eval_env=None,
     ):
 
         self._qf1 = qf1
@@ -129,7 +129,7 @@ class SAC(RLAlgorithm):
         self._buffer_batch_size = buffer_batch_size
         self._discount = discount
         self._reward_scale = reward_scale
-        self.max_path_length = max_path_length
+        self.max_episode_length = max_episode_length
         self._max_eval_path_length = max_eval_path_length
 
         self.policy = policy
