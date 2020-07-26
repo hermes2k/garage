@@ -408,6 +408,18 @@ class TrajectoryBatch(
                     [p['observations'][-1] for p in paths])
 
         stacked_paths = tensor_utils.concat_tensor_dict_list(paths)
+
+        # Temporary solution. This logic is not needed if algorithms process
+        # step_types instead of dones directly.
+        if 'dones' in stacked_paths and 'step_types' not in stacked_paths:
+            step_types = np.array([
+                StepType.TERMINAL if done else StepType.MID
+                for done in stacked_paths['dones']
+            ],
+                                  dtype=StepType)
+            stacked_paths['step_types'] = step_types
+            del stacked_paths['dones']
+
         return cls(env_spec=env_spec,
                    observations=observations,
                    last_observations=last_observations,

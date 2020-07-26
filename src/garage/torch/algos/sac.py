@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from garage import log_performance
+from garage import log_performance, StepType
 from garage.np import obtain_evaluation_samples
 from garage.np.algos import RLAlgorithm
 from garage.sampler import RaySampler
@@ -86,30 +86,30 @@ class SAC(RLAlgorithm):
     """
 
     def __init__(
-            self,
-            env_spec,
-            policy,
-            qf1,
-            qf2,
-            replay_buffer,
-            *,  # Everything after this is numbers.
-            max_path_length,
-            max_eval_path_length=None,
-            gradient_steps_per_itr,
-            fixed_alpha=None,
-            target_entropy=None,
-            initial_log_entropy=0.,
-            discount=0.99,
-            buffer_batch_size=64,
-            min_buffer_size=int(1e4),
-            target_update_tau=5e-3,
-            policy_lr=3e-4,
-            qf_lr=3e-4,
-            reward_scale=1.0,
-            optimizer=torch.optim.Adam,
-            steps_per_epoch=1,
-            num_evaluation_trajectories=10,
-            eval_env=None,
+        self,
+        env_spec,
+        policy,
+        qf1,
+        qf2,
+        replay_buffer,
+        *,  # Everything after this is numbers.
+        max_path_length,
+        max_eval_path_length=None,
+        gradient_steps_per_itr,
+        fixed_alpha=None,
+        target_entropy=None,
+        initial_log_entropy=0.,
+        discount=0.99,
+        buffer_batch_size=64,
+        min_buffer_size=int(1e4),
+        target_update_tau=5e-3,
+        policy_lr=3e-4,
+        qf_lr=3e-4,
+        reward_scale=1.0,
+        optimizer=torch.optim.Adam,
+        steps_per_epoch=1,
+        num_evaluation_trajectories=10,
+        eval_env=None,
     ):
 
         self._qf1 = qf1
@@ -196,7 +196,10 @@ class SAC(RLAlgorithm):
                              action=path['actions'],
                              reward=path['rewards'].reshape(-1, 1),
                              next_observation=path['next_observations'],
-                             terminal=path['dones'].reshape(-1, 1)))
+                             terminal=np.array([
+                                 step_type == StepType.TERMINAL
+                                 for step_type in path['step_types']
+                             ]).reshape(-1, 1)))
                     path_returns.append(sum(path['rewards']))
                 assert len(path_returns) is len(runner.step_path)
                 self.episode_rewards.append(np.mean(path_returns))
