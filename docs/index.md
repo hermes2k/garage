@@ -59,6 +59,7 @@ and how to implement new MDPs and new algorithms.
    user/testing
    user/benchmarking
    user/writing_documentation
+   user/preparing_a_pr
 
 .. toctree::
    :caption: API Reference
