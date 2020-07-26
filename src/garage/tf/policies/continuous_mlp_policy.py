@@ -6,6 +6,7 @@ continuous action.
 """
 import tensorflow as tf
 
+from garage import flatten_if_unflattened, flatten_n_if_unflattened
 from garage.experiment import deterministic
 from garage.tf.models import MLPModel
 from garage.tf.policies.policy import Policy
@@ -122,6 +123,8 @@ class ContinuousMLPPolicy(MLPModel, Policy):
             dict: Empty dict since this policy does not model a distribution.
 
         """
+        observation = flatten_if_unflattened(self.observation_space,
+                                             observation)
         action = self._f_prob([observation])
         action = self.action_space.unflatten(action)
         return action, dict()
@@ -137,6 +140,8 @@ class ContinuousMLPPolicy(MLPModel, Policy):
             dict: Empty dict since this policy does not model a distribution.
 
         """
+        observations = flatten_n_if_unflattened(self.observation_space,
+                                                observations)
         actions = self._f_prob(observations)
         actions = self.action_space.unflatten_n(actions)
         return actions, dict()

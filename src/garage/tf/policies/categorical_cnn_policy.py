@@ -9,6 +9,7 @@ import akro
 import numpy as np
 import tensorflow as tf
 
+from garage import flatten_if_unflattened, flatten_n_if_unflattened
 from garage.experiment import deterministic
 from garage.tf.models import CategoricalCNNModel
 from garage.tf.policies.policy import Policy
@@ -152,6 +153,8 @@ class CategoricalCNNPolicy(CategoricalCNNModel, Policy):
             dict(numpy.ndarray): Distribution parameters.
 
         """
+        observation = flatten_if_unflattened(self.observation_space,
+                                             observation)
         sample, prob = self._f_prob(np.expand_dims([observation], 1))
         return np.squeeze(sample), dict(prob=np.squeeze(prob, axis=1)[0])
 
@@ -166,6 +169,8 @@ class CategoricalCNNPolicy(CategoricalCNNModel, Policy):
             dict(numpy.ndarray): Distribution parameters.
 
         """
+        observations = flatten_n_if_unflattened(self.observation_space,
+                                                observations)
         samples, probs = self._f_prob(np.expand_dims(observations, 1))
         return np.squeeze(samples), dict(prob=np.squeeze(probs, axis=1))
 

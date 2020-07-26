@@ -8,6 +8,7 @@ import akro
 import numpy as np
 import tensorflow as tf
 
+from garage import flatten_if_unflattened, flatten_n_if_unflattened
 from garage.experiment import deterministic
 from garage.tf.models import CategoricalGRUModel
 from garage.tf.policies.policy import Policy
@@ -215,6 +216,8 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
             dict(numpy.ndarray): Distribution parameters.
 
         """
+        observation = flatten_if_unflattened(self.observation_space,
+                                             observation)
         actions, agent_infos = self.get_actions([observation])
         return actions[0], {k: v[0] for k, v in agent_infos.items()}
 
@@ -229,6 +232,8 @@ class CategoricalGRUPolicy(CategoricalGRUModel, Policy):
             dict(numpy.ndarray): Distribution parameters.
 
         """
+        observations = flatten_n_if_unflattened(self.observation_space,
+                                                observations)
         if self._state_include_action:
             assert self._prev_actions is not None
             all_input = np.concatenate([observations, self._prev_actions],

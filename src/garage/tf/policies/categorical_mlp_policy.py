@@ -8,6 +8,7 @@ import akro
 import numpy as np
 import tensorflow as tf
 
+from garage import flatten_if_unflattened, flatten_n_if_unflattened
 from garage.experiment import deterministic
 from garage.tf.models import CategoricalMLPModel
 from garage.tf.policies.policy import Policy
@@ -124,6 +125,8 @@ class CategoricalMLPPolicy(CategoricalMLPModel, Policy):
             dict(numpy.ndarray): Distribution parameters.
 
         """
+        observation = flatten_if_unflattened(self.observation_space,
+                                             observation)
         sample, prob = self._f_prob(np.expand_dims([observation], 1))
         return np.squeeze(sample[0]), dict(prob=np.squeeze(prob, axis=1)[0])
 
@@ -138,9 +141,8 @@ class CategoricalMLPPolicy(CategoricalMLPModel, Policy):
             dict(numpy.ndarray): Distribution parameters.
 
         """
-        # Flatten the observation, will be removed soon
-        # Flattening should be done in sampler
-        observations = self.observation_space.flatten_n(observations)
+        observations = flatten_n_if_unflattened(self.observation_space,
+                                                observations)
         samples, probs = self._f_prob(np.expand_dims(observations, 1))
         return np.squeeze(samples), dict(prob=np.squeeze(probs, axis=1))
 
